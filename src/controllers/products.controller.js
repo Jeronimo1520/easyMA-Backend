@@ -1,6 +1,13 @@
 require("express");
+const Product = require("../models/Product");
+const { MongoService } = require("../services/MongoService");
+
+const collection = "products";
+const adapterDatabase = new MongoService();
+
 class ProductsController {
-    constructor() {}
+  constructor() {}
+
   /**
    *
    * @param {import('express').Request} req
@@ -9,6 +16,26 @@ class ProductsController {
   async createProduct(req, res) {
     try {
       let payload = req.body;
+      // Verifica que los campos necesarios existen en el payload antes de crear la instancia
+      if (!payload.id || !payload.name || !payload.description) {
+        throw { status: 400, message: "Campos obligatorios faltantes" };
+      }
+      console.log(payload);
+      const product = new Product(
+        payload?.id,
+        payload?.name,
+        payload?.description
+      );
+      console.log(product);
+      product.valid();
+      const response = await adapterDatabase.create(collection, payload);
+      payload.id = response.insertedId;
+      payload.url = `http://localhost:3000/${collection}/${payload.id}`;
+      res.status(201).json({
+        ok: true,
+        message: "Producto creado exitosamente",
+        info: payload,
+      });
     } catch (error) {
       console.error(error);
       res.status(error?.status || 500).json({
@@ -18,20 +45,44 @@ class ProductsController {
     }
   }
 
+  /**
+   *
+   * @param {import('express').Request} req
+   * @param {import('express').Response} res
+   */
   async getProducts(req, res) {
     try {
-      let payload = req.body;
+      const products = await adapterDatabase.findAll(collection);
+      res.status(200).json({
+        ok: true,
+        message: "Productos consultados",
+        info: products,
+      });
     } catch (error) {
-      console.error(error);
+      console.log(error);
       res.status(error?.status || 500).json({
         ok: false,
         message: error?.message || error,
       });
     }
   }
+  /**
+   *
+   * @param {import('express').Request} req
+   * @param {import('express').Response} res
+   */
   async getProduct(req, res) {
     try {
-      let payload = req.body;
+      const id = req.params.id;
+      const product = await adapterDatabase.findOne(collection, id);
+      if (!product) {
+        throw { status: 404, message: "El producto no se encontro." };
+      }
+      res.status(200).json({
+        ok: true,
+        message: "Producto consultado",
+        info: product,
+      });
     } catch (error) {
       console.error(error);
       res.status(error?.status || 500).json({
@@ -41,9 +92,39 @@ class ProductsController {
     }
   }
 
+  /**
+   *
+   * PENDIENTE:
+   * - Realizar la validación de tarea y body
+   * - Validar si el documento existe antes de actualizar
+   * -
+   * @param {import('express').Request} req
+   * @param {import('express').Response} res
+   */
   async updateProduct(req, res) {
     try {
       let payload = req.body;
+      const id = req.params.id;
+      const product = new Product(
+        payload?.id,
+        payload?.name,
+        payload?.description
+      );
+      product.valid();
+      const { modifiedCount: count } = await adapterDatabase.update(
+        collection,
+        payload,
+        id
+      );
+      if (count == 0) {
+        throw { status: 409, message: "Error al actualizar." };
+      }
+      payload.url = `http://localhost:3000/${collection}/${payload.id}`;
+      res.status(200).json({
+        ok: true,
+        message: "",
+        info: payload,
+      });
     } catch (error) {
       console.error(error);
       res.status(error?.status || 500).json({
@@ -53,9 +134,27 @@ class ProductsController {
     }
   }
 
+  /**
+   *
+   * @param {import('express').Request} req
+   * @param {import('express').Response} res
+   */
   async deleteProduct(req, res) {
     try {
-      let payload = req.body;
+      const id = req.params.id;
+      // deletedCount es la variable que destructuro: count el nombre de la variable que voy a usar
+      const { deletedCount: count } = await adapterDatabase.delete(
+        collection,
+        id
+      );
+      if (count == 0) {
+        throw { status: 404, message: "El producto no se encontro." };
+      }
+      res.status(200).json({
+        ok: true,
+        message: "Producto eliminado",
+        info: {},
+      });
     } catch (error) {
       console.error(error);
       res.status(error?.status || 500).json({
