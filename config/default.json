@@ -1,0 +1,10 @@
+{
+    "database":{
+      "name":"easyma",
+      "user":"",
+      "password":"",
+      "host":"cluster0.whzzoqw.mongodb.net"
+    },
+    "api_host":"http://localhost:3001/",
+    "port":3001
+  }
