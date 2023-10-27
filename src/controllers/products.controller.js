@@ -6,7 +6,7 @@ const collection = "products";
 const adapterDatabase = new MongoService();
 
 class ProductsController {
-  constructor() {}
+  constructor() { }
 
   /**
    *
