@@ -1,6 +1,7 @@
 const express = require("express");
 
 const app = express();
+app.use(express.json());
 
 // IMPORTAR ROUTER
 const router = require("./src/routers");

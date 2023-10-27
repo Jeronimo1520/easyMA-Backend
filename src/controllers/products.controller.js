@@ -15,6 +15,7 @@ class ProductsController {
    */
   async createProduct(req, res) {
     try {
+      console.log(req.body);
       let payload = req.body;
       // Verifica que los campos necesarios existen en el payload antes de crear la instancia
       if (!payload.id || !payload.name || !payload.description) {
