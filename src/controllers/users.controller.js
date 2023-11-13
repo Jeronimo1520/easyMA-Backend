@@ -1,12 +1,12 @@
 require("express");
-const Customer = require("../models/Customer");
+const User = require("../models/Users");
 const { MongoService } = require("../services/MongoService");
 
-const colletion = "customers";
+const colletion = "users";
 const adapterDatabase = new MongoService();
 
 
-class CustomersController {
+class UsersController {
     constructor() { }
 
     /**
@@ -14,39 +14,26 @@ class CustomersController {
      * @param {import('express').Request} req
      * @param {import('express').Response} res
      */
-    async createCustomer(req, res) {
+    async createUser(req, res) {
         try {
             console.log(req.body);
             let payload = req.body;
 
-            // Verifica que los campos necesarios existen en el payload antes de crear la instancia
-            if (!payload.id || !payload.name || !payload.lastname || !payload.email || !payload.address || !payload.charge || !payload.contact) {
-                throw { status: 400, message: "Campos obligatorios faltantes" };
-            }
-            console.log(payload);
-            const customer = new Customer(
+            const user = new User(
                 payload?.id,
                 payload?.name,
-                payload?.lastname,
                 payload?.email,
-                payload?.address,
-                payload?.charge,
-                payload?.contact
+                payload?.password
             );
-            console.log(customer);
-            customer.valid();
-
-            const customerDb = await adapterDatabase.findByFilter(colletion, ({id: customer.id}));
-            if (customerDb) {
-                throw {status:400, message:"El vendedor ya existe"};
-            }
+            console.log(user);
+            user.valid();
 
             const response = await adapterDatabase.create(colletion, payload);
-            payload.id = response.insertedId;
-            payload.url = `http://localhost:3000/${colletion}/${payload.id}`;
+            payload._id = response.insertedId;
+    
             res.status(201).json({
                 ok: true,
-                message: "Cliente creado exitosamente",
+                message: "Usuario creado exitosamente",
                 info: payload,
             });
         } catch (error) {
@@ -63,13 +50,13 @@ class CustomersController {
      * @param {import('express').Request} req
      * @param {import('express').Response} res
      */
-    async getCustomers(req, res) {
+    async getUsers(req, res) {
         try {
-            const customers = await adapterDatabase.findAll(colletion);
+            const users = await adapterDatabase.findAll(colletion);
             res.status(200).json({
                 ok: true,
-                message: "Clientes consultados",
-                info: customers,
+                message: "Usuarios consultados",
+                info: users,
             });
         } catch (error) {
             console.log(error);
@@ -84,17 +71,17 @@ class CustomersController {
      * @param {import('express').Request} req
      * @param {import('express').Response} res
      */
-    async getCustomer(req, res) {
+    async getUser(req, res) {
         try {
             const id = req.params.id;
-            const customer = await adapterDatabase.findOne(colletion, id);
-            if (!customer) {
-                throw { status: 404, message: "El cliente no se encontro." };
+            const user = await adapterDatabase.findOne(colletion, id);
+            if (!user) {
+                throw { status: 404, message: "El usuario no se encontro." };
             }
             res.status(200).json({
                 ok: true,
-                message: "Cliente consultado",
-                info: customer,
+                message: "Usuario consultado",
+                info: user,
             });
         } catch (error) {
             console.error(error);
@@ -114,20 +101,12 @@ class CustomersController {
      * @param {import('express').Request} req
      * @param {import('express').Response} res
      */
-    async updateCustomer(req, res) {
+    async updateUser(req, res) {
         try {
             let payload = req.body;
             const id = req.params.id;
-            const customer = new Customer(
-                payload?.id,
-                payload?.name,
-                payload?.lastname,
-                payload?.email,
-                payload?.address,
-                payload?.charge,
-                payload?.contact
-            );
-            customer.valid();
+            const user = new User(payload);
+            user.valid();
             const { modifiedCount: count } = await adapterDatabase.update(
                 colletion,
                 payload,
@@ -136,7 +115,7 @@ class CustomersController {
             if (count == 0) {
                 throw { status: 409, message: "Error al actualizar." };
             }
-            payload.url = `http://localhost:3000/${colletion}/${payload.id}`;
+            
             res.status(200).json({
                 ok: true,
                 message: "",
@@ -156,7 +135,7 @@ class CustomersController {
      * @param {import('express').Request} req
      * @param {import('express').Response} res
      */
-    async deleteCustomer(req, res) {
+    async deleteUser(req, res) {
         try {
             const id = req.params.id;
             // deletedCount es la variable que destructuro: count el nombre de la variable que voy a usar
@@ -165,11 +144,11 @@ class CustomersController {
                 id
             );
             if (count == 0) {
-                throw { status: 404, message: "El cliente no se encontro." };
+                throw { status: 404, message: "El usuario no se encontro." };
             }
             res.status(200).json({
                 ok: true,
-                message: "Cliente eliminado",
+                message: "Usuario eliminado",
                 info: {},
             });
         } catch (error) {
@@ -181,4 +160,4 @@ class CustomersController {
         }
     }
 }
-module.exports = CustomersController;
+module.exports = UsersController;

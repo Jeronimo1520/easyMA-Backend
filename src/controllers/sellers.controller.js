@@ -34,6 +34,7 @@ class SellersController {
             );
             console.log(seller);
             seller.valid();
+
             const response = await adapterDatabase.create(colletion, payload);
             payload.id = response.insertedId;
             payload.url = `http://localhost:3000/${colletion}/${payload.id}`;
