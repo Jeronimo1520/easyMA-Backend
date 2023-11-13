@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/Jeronimo1520/easyMA-Backend#readme",
   "dependencies": {
+    "bcrypt": "^5.1.1",
     "config": "^3.3.9",
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.2",

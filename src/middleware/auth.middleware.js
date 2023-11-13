@@ -21,6 +21,7 @@ const AuthMiddleware = (req, res, next) =>{
         next();
 
     } catch(error){
+        console.log(error);
         if(error instanceof JsonWebTokenError){
         return res.status(400).json({
             ok:false,

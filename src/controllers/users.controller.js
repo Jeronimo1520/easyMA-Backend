@@ -1,6 +1,7 @@
 require("express");
 const User = require("../models/Users");
 const { MongoService } = require("../services/MongoService");
+const { generateHash } = require("../services/Bcrypt");
 
 const colletion = "users";
 const adapterDatabase = new MongoService();
@@ -28,6 +29,8 @@ class UsersController {
             
             user.valid();
 
+            payload.password = await generateHash(payload.password);
+            console.log("password", payload.password);
             const response = await adapterDatabase.create(colletion, payload);
             payload._id = response.insertedId;
     
