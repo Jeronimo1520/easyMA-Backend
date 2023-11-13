@@ -25,7 +25,7 @@ class UsersController {
                 payload?.email,
                 payload?.password
             );
-            console.log(user);
+            
             user.valid();
 
             const response = await adapterDatabase.create(colletion, payload);
@@ -105,7 +105,12 @@ class UsersController {
         try {
             let payload = req.body;
             const id = req.params.id;
-            const user = new User(payload);
+            const user = new User(
+                payload?.id,
+                payload?.name,
+                payload?.email,
+                payload?.password
+            );
             user.valid();
             const { modifiedCount: count } = await adapterDatabase.update(
                 colletion,
