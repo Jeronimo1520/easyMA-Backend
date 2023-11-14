@@ -21,15 +21,13 @@ const AuthMiddleware = (req, res, next) =>{
         next();
 
     } catch(error){
-        console.log(error);
         if(error instanceof JsonWebTokenError){
         return res.status(400).json({
             ok:false,
             message: 'Este token no es válido',
         });
         };
-        console.log(error);
-        res.status(500).json({
+        return res.status(500).json({
             ok:false,
             message:'Error Auth Middleware'
         });
