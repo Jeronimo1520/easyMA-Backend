@@ -1,11 +1,12 @@
 class Seller {
-    constructor(id, name, lastName, email, charge, contact) {
+    constructor(id, name, lastName, email, charge, contact,img) {
         this.id = id;
         this.name = name;
         this.lastName = lastName;
         this.email = email;
         this.charge = charge;
         this.contact = contact;
+        this.img = img;
     }
 
     valid() {
@@ -37,6 +38,7 @@ class Seller {
             email: this.email,
             charge: this.charge,
             contact: this.contact,
+            img: this.img
         };
     }
 }

@@ -1,8 +1,9 @@
 class Product {
-    constructor(id, name, description) {
+    constructor(id, name, description,price) {
       this.id = id;
       this.name = name;
       this.description = description;
+      this.price = price
     }
   
     valid() {
@@ -15,6 +16,9 @@ class Product {
       if (!this.description || this.description?.toString().length == 0) {
         throw { status: 400, message: "La descripcion es obligatoria" };
       }
+      if (!this.price || this.description?.toString().length == 0) {
+        throw { status: 400, message: "El precio es obligatori0" };
+      }
     }
   
     toJson() {
@@ -22,6 +26,7 @@ class Product {
         id: this.id,
         name: this.name,
         description: this.description,
+        price: this.price
       };
     }
   }

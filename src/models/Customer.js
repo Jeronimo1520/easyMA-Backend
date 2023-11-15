@@ -1,5 +1,5 @@
 class Customer {
-    constructor(id, name, lastName, email, address, charge, contact) {
+    constructor(id, name, lastName, email, address, charge, contact,img) {
         this.id = id;
         this.name = name;
         this.lastName = lastName;
@@ -7,6 +7,7 @@ class Customer {
         this.address = address;
         this.charge = charge;
         this.contact = contact;
+        this.img = img
     }
 
     valid() {
@@ -22,9 +23,9 @@ class Customer {
         if (!this.email || this.email?.toString().length == 0) {
             throw { status: 400, message: "El email es obligatorio" };
         }
-        if (!this.address || this.address?.toString().length == 0) {
-            throw { status: 400, message: "La dirección es obligatoria" };
-        }
+        // if (!this.address || this.address?.toString().length == 0) {
+        //     throw { status: 400, message: "La dirección es obligatoria" };
+        // }
         if (!this.charge || this.charge?.toString().length == 0) {
             throw { status: 400, message: "El cargo es obligatorio" };
         }
@@ -42,6 +43,7 @@ class Customer {
             address: this.address,
             charge: this.charge,
             contact: this.contact,
+            img: this.img
         };
     }
 }
