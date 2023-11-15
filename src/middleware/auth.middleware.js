@@ -27,6 +27,7 @@ const AuthMiddleware = (req, res, next) =>{
             message: 'Este token no es válido',
         });
         };
+        // console.error(error);
         return res.status(500).json({
             ok:false,
             message:'Error Auth Middleware'

@@ -8,7 +8,7 @@ const createToken = (payload) => {
 
 const verifyToken = (token) => {
   try {
-    return jwt.verify(token, SECRET);
+    return JWT.verify(token, SECRET);
   } catch (error) {
     throw { ok: false, info: error };
   }
