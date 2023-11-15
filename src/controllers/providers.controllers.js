@@ -1,12 +1,11 @@
 require("express");
-const Seller = require("../models/Seller");
+const Provider = require("../models/Seller");
 const { MongoService } = require("../services/MongoService");
 
-const collection = "sellers";
+const collection = "providers";
 const adapterDatabase = new MongoService();
 
-
-class SellersController {
+class ProvidersController {
     constructor() { }
 
     /**
@@ -14,26 +13,26 @@ class SellersController {
      * @param {import('express').Request} req
      * @param {import('express').Response} res
      */
-    async createSeller(req, res) {
+    async createProvider(req, res) {
         try {
             console.log(req.body);
             let payload = req.body;
 
             // Verifica que los campos necesarios existen en el payload antes de crear la instancia
-            if (!payload.id || !payload.name || !payload.lastname || !payload.email || !payload.charge || !payload.contact) {
+            if (!payload.id || !payload.nombre || !payload.correo || !payload.cargo || !payload.producto || !payload.contacto) {
                 throw { status: 400, message: "Campos obligatorios faltantes" };
             }
             console.log(payload);
-            const seller = new Seller(
+            const provider = new Provider(
                 payload?.id,
-                payload?.name,
-                payload?.lastname,
-                payload?.email,
-                payload?.charge,
-                payload?.contact
+                payload?.nombre,
+                payload?.correo,
+                payload?.cargo,
+                payload?.producto,
+                payload?.contacto
             );
-            console.log(seller);
-            seller.valid();
+            console.log(provider);
+            provider.valid();
 
             const response = await adapterDatabase.create(collection, payload);
             payload.id = response.insertedId;
@@ -57,13 +56,13 @@ class SellersController {
      * @param {import('express').Request} req
      * @param {import('express').Response} res
      */
-    async getSellers(req, res) {
+    async getProviders(req, res) {
         try {
-            const sellers = await adapterDatabase.findAll(collection);
+            const providers = await adapterDatabase.findAll(collection);
             res.status(200).json({
                 ok: true,
-                message: "Vendedores consultados",
-                info: sellers,
+                message: "Proveedores consultados",
+                info: providers,
             });
         } catch (error) {
             console.log(error);
@@ -78,17 +77,17 @@ class SellersController {
      * @param {import('express').Request} req
      * @param {import('express').Response} res
      */
-    async getSeller(req, res) {
+    async getProvider(req, res) {
         try {
             const id = req.params.id;
-            const seller = await adapterDatabase.findOne(collection, id);
-            if (!seller) {
-                throw { status: 404, message: "El vendedor no se encontro." };
+            const provider = await adapterDatabase.findOne(collection, id);
+            if (!provider) {
+                throw { status: 404, message: "El proveedor no se encontro." };
             }
             res.status(200).json({
                 ok: true,
                 message: "Vendedor consultado",
-                info: seller,
+                info: provider,
             });
         } catch (error) {
             console.error(error);
@@ -108,19 +107,19 @@ class SellersController {
      * @param {import('express').Request} req
      * @param {import('express').Response} res
      */
-    async updateSeller(req, res) {
+    async updateProvider(req, res) {
         try {
             let payload = req.body;
             const id = req.params.id;
-            const seller = new Seller(
+            const provider = new Provider(
                 payload?.id,
-                payload?.name,
-                payload?.lastname,
-                payload?.email,
-                payload?.charge,
-                payload?.contact
+                payload?.nombre,
+                payload?.correo,
+                payload?.cargo,
+                payload?.producto,
+                payload?.contacto
             );
-            seller.valid();
+            provider.valid();
             const { modifiedCount: count } = await adapterDatabase.update(
                 collection,
                 payload,
@@ -149,7 +148,7 @@ class SellersController {
      * @param {import('express').Request} req
      * @param {import('express').Response} res
      */
-    async deleteSeller(req, res) {
+    async deleteProvider(req, res) {
         try {
             const id = req.params.id;
             // deletedCount es la variable que destructuro: count el nombre de la variable que voy a usar
@@ -158,11 +157,11 @@ class SellersController {
                 id
             );
             if (count == 0) {
-                throw { status: 404, message: "El vendedor no se encontro." };
+                throw { status: 404, message: "El proveedor no se encontro." };
             }
             res.status(200).json({
                 ok: true,
-                message: "Vendedor eliminado",
+                message: "Proveedor eliminado",
                 info: {},
             });
         } catch (error) {
@@ -174,4 +173,4 @@ class SellersController {
         }
     }
 }
-module.exports = SellersController;
+module.exports = ProvidersController;

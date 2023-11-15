@@ -3,6 +3,7 @@ const productRouter = require("./products.router");
 const customerRouter = require("./customers.router");
 const sellerRouter = require("./sellers.router");
 const usersRouter = require("./users.router");
+const providerRouter = require('./providers.router');
 //clase
 const { AuthController } = require("../controllers");
 const { AuthMiddleware } = require("../middleware/auth.middleware");
@@ -22,6 +23,7 @@ router.use(AuthMiddleware);
 router.use("/products", productRouter);
 router.use("/customers", customerRouter);
 router.use("/sellers", sellerRouter);
+router.use("/providers", providerRouter);
 router.post("/verify", authController.verifyToken);
 
 module.exports = router;
