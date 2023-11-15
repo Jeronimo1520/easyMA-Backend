@@ -18,14 +18,15 @@ class ProductsController {
       console.log(req.body);
       let payload = req.body;
       // Verifica que los campos necesarios existen en el payload antes de crear la instancia
-      if (!payload.id || !payload.name || !payload.description) {
+      if (!payload.id || !payload.name || !payload.price || !payload.description) {
         throw { status: 400, message: "Campos obligatorios faltantes" };
       }
       console.log(payload);
       const product = new Product(
         payload?.id,
         payload?.name,
-        payload?.description
+        payload?.description,
+        payload?.price
       );
       console.log(product);
       product.valid();
@@ -109,7 +110,8 @@ class ProductsController {
       const product = new Product(
         payload?.id,
         payload?.name,
-        payload?.description
+        payload?.description,
+        payload?.price
       );
       product.valid();
       const { modifiedCount: count } = await adapterDatabase.update(

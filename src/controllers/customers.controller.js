@@ -2,7 +2,7 @@ require("express");
 const Customer = require("../models/Customer");
 const { MongoService } = require("../services/MongoService");
 
-const colletion = "customers";
+const collection = "customers";
 const adapterDatabase = new MongoService();
 
 
@@ -36,14 +36,14 @@ class CustomersController {
             console.log(customer);
             customer.valid();
 
-            const customerDb = await adapterDatabase.findByFilter(colletion, ({id: customer.id}));
+            const customerDb = await adapterDatabase.findByFilter(collection, ({id: customer.id}));
             if (customerDb) {
                 throw {status:400, message:"El vendedor ya existe"};
             }
 
-            const response = await adapterDatabase.create(colletion, payload);
+            const response = await adapterDatabase.create(collection, payload);
             payload.id = response.insertedId;
-            payload.url = `http://localhost:3000/${colletion}/${payload.id}`;
+            payload.url = `http://localhost:3000/${collection}/${payload.id}`;
             res.status(201).json({
                 ok: true,
                 message: "Cliente creado exitosamente",
@@ -65,7 +65,7 @@ class CustomersController {
      */
     async getCustomers(req, res) {
         try {
-            const customers = await adapterDatabase.findAll(colletion);
+            const customers = await adapterDatabase.findAll(collection);
             res.status(200).json({
                 ok: true,
                 message: "Clientes consultados",
@@ -87,7 +87,7 @@ class CustomersController {
     async getCustomer(req, res) {
         try {
             const id = req.params.id;
-            const customer = await adapterDatabase.findOne(colletion, id);
+            const customer = await adapterDatabase.findOne(collection, id);
             if (!customer) {
                 throw { status: 404, message: "El cliente no se encontro." };
             }
@@ -129,14 +129,14 @@ class CustomersController {
             );
             customer.valid();
             const { modifiedCount: count } = await adapterDatabase.update(
-                colletion,
+                collection,
                 payload,
                 id
             );
             if (count == 0) {
                 throw { status: 409, message: "Error al actualizar." };
             }
-            payload.url = `http://localhost:3000/${colletion}/${payload.id}`;
+            payload.url = `http://localhost:3000/${collection}/${payload.id}`;
             res.status(200).json({
                 ok: true,
                 message: "",
@@ -161,10 +161,11 @@ class CustomersController {
             const id = req.params.id;
             // deletedCount es la variable que destructuro: count el nombre de la variable que voy a usar
             const { deletedCount: count } = await adapterDatabase.delete(
-                colletion,
+                collection,
                 id
             );
             if (count == 0) {
+                
                 throw { status: 404, message: "El cliente no se encontro." };
             }
             res.status(200).json({
