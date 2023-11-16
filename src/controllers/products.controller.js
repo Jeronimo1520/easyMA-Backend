@@ -17,8 +17,11 @@ class ProductsController {
     try {
       console.log(req.body);
       let payload = req.body;
+      let img = req.files.img;
+      console.log(payload);
+      console.log(img);
       // Verifica que los campos necesarios existen en el payload antes de crear la instancia
-      if (!payload.id || !payload.name || !payload.price || !payload.description || !payload.img) {
+      if (!payload.id || !payload.name || !payload.price || !payload.description) {
         throw { status: 400, message: "Campos obligatorios faltantes" };
       }
       console.log(payload);
@@ -48,38 +51,7 @@ class ProductsController {
       });
     }
   }
-  /**
- *
- * @param {import('express').Request} req
- * @param {import('express').Response} res
- */
-  async createdocumentProfile(req, res) {
-    try {
-      const id = req.params.id;
-      const document = req.files.document;
-      if (document) {
-        document.mv(`./docs/${document.md5}${document.name}`);
-        const host = config.get("api_host");
-        const url = `${host}static/${document.md5}${document.name}`;
-        const user = await adapterDatabase.findOne(collection, id);
-        user.document_profile = url;
-        await adapterDatabase.update(collection, user, id);
 
-        res.status(200).json({
-          ok: true,
-          message: "documentn del usuario guardado",
-          info: user,
-        });
-      }
-      throw { status: 400 }
-    } catch (error) {
-      console.error(error);
-      res.status(error?.status || 500).json({
-        ok: false,
-        message: error?.message || error,
-      });
-    }
-  }
 
 
   /**
