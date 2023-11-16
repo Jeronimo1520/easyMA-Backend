@@ -18,7 +18,7 @@ class ProductsController {
       console.log(req.body);
       let payload = req.body;
       // Verifica que los campos necesarios existen en el payload antes de crear la instancia
-      if (!payload.id || !payload.name || !payload.price || !payload.description) {
+      if (!payload.id || !payload.name || !payload.price || !payload.description || !payload.img) {
         throw { status: 400, message: "Campos obligatorios faltantes" };
       }
       console.log(payload);
@@ -26,13 +26,15 @@ class ProductsController {
         payload?.id,
         payload?.name,
         payload?.description,
-        payload?.price
+        payload?.price,
+        payload?.img
       );
       console.log(product);
       product.valid();
       const response = await adapterDatabase.create(collection, payload);
       payload.id = response.insertedId;
       payload.url = `http://localhost:3000/${collection}/${payload.id}`;
+
       res.status(201).json({
         ok: true,
         message: "Producto creado exitosamente",
@@ -46,6 +48,39 @@ class ProductsController {
       });
     }
   }
+  /**
+ *
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ */
+  async createdocumentProfile(req, res) {
+    try {
+      const id = req.params.id;
+      const document = req.files.document;
+      if (document) {
+        document.mv(`./docs/${document.md5}${document.name}`);
+        const host = config.get("api_host");
+        const url = `${host}static/${document.md5}${document.name}`;
+        const user = await adapterDatabase.findOne(collection, id);
+        user.document_profile = url;
+        await adapterDatabase.update(collection, user, id);
+
+        res.status(200).json({
+          ok: true,
+          message: "documentn del usuario guardado",
+          info: user,
+        });
+      }
+      throw { status: 400 }
+    } catch (error) {
+      console.error(error);
+      res.status(error?.status || 500).json({
+        ok: false,
+        message: error?.message || error,
+      });
+    }
+  }
+
 
   /**
    *
@@ -78,7 +113,7 @@ class ProductsController {
       const id = req.params.id;
       const product = await adapterDatabase.findOne(collection, id);
       if (!product) {
-        throw { status: 404, message: "El producto no se encontro." };
+        throw { status: 404, message: "El producto no se encontro" };
       }
       res.status(200).json({
         ok: true,
@@ -111,7 +146,7 @@ class ProductsController {
         payload?.id,
         payload?.name,
         payload?.description,
-        payload?.price
+        payload?.price,
       );
       product.valid();
       const { modifiedCount: count } = await adapterDatabase.update(
@@ -151,7 +186,7 @@ class ProductsController {
         id
       );
       if (count == 0) {
-        throw { status: 404, message: "El producto no se encontro." };
+        throw { status: 404, message: "El producto no se encontro" };
       }
       res.status(200).json({
         ok: true,
