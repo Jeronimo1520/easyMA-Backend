@@ -1,10 +1,12 @@
 const express = require("express");
+const fileupload = require("express-fileupload");
 
 const app = express();
 const cors = require("cors");
 
 app.use(cors());
 app.use(express.json());
+app.use(fileupload());
 
 // IMPORTAR ROUTER
 const router = require("./src/routers");
