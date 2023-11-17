@@ -3,7 +3,7 @@ const User = require("../models/Users");
 const { MongoService } = require("../services/MongoService");
 const { generateHash } = require("../services/Bcrypt");
 
-const colletion = "users";
+const collection = "users";
 const adapterDatabase = new MongoService();
 
 
@@ -31,7 +31,7 @@ class UsersController {
 
             payload.password = await generateHash(payload.password);
             console.log("password", payload.password);
-            const response = await adapterDatabase.create(colletion, payload);
+            const response = await adapterDatabase.create(collection, payload);
             payload._id = response.insertedId;
     
             res.status(201).json({
@@ -55,7 +55,7 @@ class UsersController {
      */
     async getUsers(req, res) {
         try {
-            const users = await adapterDatabase.findAll(colletion);
+            const users = await adapterDatabase.findAll(collection);
             res.status(200).json({
                 ok: true,
                 message: "Usuarios consultados",
@@ -77,7 +77,7 @@ class UsersController {
     async getUser(req, res) {
         try {
             const id = req.params.id;
-            const user = await adapterDatabase.findOne(colletion, id);
+            const user = await adapterDatabase.findOne(collection, id);
             if (!user) {
                 throw { status: 404, message: "El usuario no se encontro." };
             }
@@ -115,8 +115,9 @@ class UsersController {
                 payload?.password
             );
             user.valid();
+            delete payload._id
             const { modifiedCount: count } = await adapterDatabase.update(
-                colletion,
+                collection,
                 payload,
                 id
             );
@@ -148,7 +149,7 @@ class UsersController {
             const id = req.params.id;
             // deletedCount es la variable que destructuro: count el nombre de la variable que voy a usar
             const { deletedCount: count } = await adapterDatabase.delete(
-                colletion,
+                collection,
                 id
             );
             if (count == 0) {

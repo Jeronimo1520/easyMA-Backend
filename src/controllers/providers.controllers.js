@@ -110,7 +110,7 @@ class ProvidersController {
     async updateProvider(req, res) {
         try {
             let payload = req.body;
-            const id = req.params.id;
+            const id = payload.id;
             const provider = new Provider(
                 payload?.id,
                 payload?.nombre,
@@ -120,6 +120,7 @@ class ProvidersController {
                 payload?.contacto
             );
             provider.valid();
+            delete payload._id
             const { modifiedCount: count } = await adapterDatabase.update(
                 collection,
                 payload,
@@ -128,7 +129,7 @@ class ProvidersController {
             if (count == 0) {
                 throw { status: 409, message: "Error al actualizar." };
             }
-            payload.url = `http://localhost:3000/${collection}/${payload.id}`;
+            payload.url = `http://localhost:3000/editar_proveedor/${payload._id}`;
             res.status(200).json({
                 ok: true,
                 message: "",

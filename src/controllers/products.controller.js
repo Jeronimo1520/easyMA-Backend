@@ -141,7 +141,7 @@ class ProductsController {
   async updateProduct(req, res) {
     try {
       let payload = req.body;
-      const id = req.params.id;
+      const id = payload.id
       const product = new Product(
         payload?.id,
         payload?.name,
@@ -149,15 +149,18 @@ class ProductsController {
         payload?.price,
       );
       product.valid();
+      delete payload._id
       const { modifiedCount: count } = await adapterDatabase.update(
         collection,
         payload,
         id
       );
+      console.log(id);
+      console.log(payload);
       if (count == 0) {
         throw { status: 409, message: "Error al actualizar." };
       }
-      payload.url = `http://localhost:3000/${collection}/${payload.id}`;
+      payload.url = `http://localhost:3000/editar_producto/${payload._id}`;
       res.status(200).json({
         ok: true,
         message: "",

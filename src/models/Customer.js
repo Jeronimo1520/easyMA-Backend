@@ -23,12 +23,10 @@ class Customer {
         if (!this.email || this.email?.toString().length == 0) {
             throw { status: 400, message: "El email es obligatorio" };
         }
-        // if (!this.address || this.address?.toString().length == 0) {
-        //     throw { status: 400, message: "La dirección es obligatoria" };
-        // }
-        if (!this.charge || this.charge?.toString().length == 0) {
-            throw { status: 400, message: "El cargo es obligatorio" };
+        if (!this.address || this.address?.toString().length == 0) {
+            throw { status: 400, message: "La dirección es obligatoria" };
         }
+    
         if (!this.contact || this.contact?.toString().length == 0) {
             throw { status: 400, message: "El contacto es obligatorio" };
         }
