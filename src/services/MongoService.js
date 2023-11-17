@@ -110,10 +110,9 @@ class MongoService extends IDatabase {
       const database = client.db(dbName);
       const collection = database.collection(collectionName);
 
-      const filter = { id }; // Filtro para encontrar el documento por su _id
-      const updateResult = await collection.updateOne(filter, {
-        $set: payload,
-      });
+      const filter = { "_id":_id }; // Filtro para encontrar el documento por su _id
+      const updateResult = await collection.findOneAndReplace(filter, 
+        payload);
       console.log(updateResult);
       return updateResult;
     } catch (error) {

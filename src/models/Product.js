@@ -3,7 +3,8 @@ class Product {
       this.id = id;
       this.name = name;
       this.description = description;
-      this.price = price
+      this.price = price,
+      this.img = null;
     }
   
     valid() {
@@ -26,7 +27,8 @@ class Product {
         id: this.id,
         name: this.name,
         description: this.description,
-        price: this.price
+        price: this.price,
+        img: this.image,
       };
     }
   }

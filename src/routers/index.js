@@ -4,6 +4,7 @@ const customerRouter = require("./customers.router");
 const sellerRouter = require("./sellers.router");
 const usersRouter = require("./users.router");
 const providerRouter = require('./providers.router');
+
 //clase
 const { AuthController } = require("../controllers");
 const { AuthMiddleware } = require("../middleware/auth.middleware");
@@ -18,6 +19,7 @@ router.use((req, res, next) => {
 
 router.post("/login", authController.login);
 router.use("/users", [AuthMiddleware], usersRouter);
+router.use('/static/',express.static('docs'))
 
 router.use(AuthMiddleware);
 router.use("/products", productRouter);

@@ -20,7 +20,7 @@ class SellersController {
             let payload = req.body;
 
             // Verifica que los campos necesarios existen en el payload antes de crear la instancia
-            if (!payload.id || !payload.name || !payload.lastname || !payload.email || !payload.charge || !payload.contact) {
+            if (!payload.id || !payload.name || !payload.lastname || !payload.email || !payload.contact) {
                 throw { status: 400, message: "Campos obligatorios faltantes" };
             }
             console.log(payload);
@@ -29,7 +29,6 @@ class SellersController {
                 payload?.name,
                 payload?.lastname,
                 payload?.email,
-                payload?.charge,
                 payload?.contact
             );
             console.log(seller);
@@ -118,7 +117,6 @@ class SellersController {
                 payload?.name,
                 payload?.lastname,
                 payload?.email,
-                payload?.charge,
                 payload?.contact
             );
             seller.valid();

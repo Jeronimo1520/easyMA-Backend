@@ -1,9 +1,11 @@
 require("express");
 const Product = require("../models/Product");
 const { MongoService } = require("../services/MongoService");
+const ConfigSerice = require("../services/ConfigService");
 
 const collection = "products";
 const adapterDatabase = new MongoService();
+const config = new ConfigSerice();
 
 class ProductsController {
   constructor() { }
@@ -17,8 +19,9 @@ class ProductsController {
     try {
       console.log(req.body);
       let payload = req.body;
+
       // Verifica que los campos necesarios existen en el payload antes de crear la instancia
-      if (!payload.id || !payload.name || !payload.price || !payload.description || !payload.img) {
+      if (!payload.id || !payload.name || !payload.price || !payload.description) {
         throw { status: 400, message: "Campos obligatorios faltantes" };
       }
       console.log(payload);
@@ -27,7 +30,6 @@ class ProductsController {
         payload?.name,
         payload?.description,
         payload?.price,
-        payload?.img
       );
       console.log(product);
       product.valid();
@@ -53,25 +55,31 @@ class ProductsController {
  * @param {import('express').Request} req
  * @param {import('express').Response} res
  */
-  async createdocumentProfile(req, res) {
+  async createImageProfile(req, res) {
     try {
       const id = req.params.id;
-      const document = req.files.document;
-      if (document) {
-        document.mv(`./docs/${document.md5}${document.name}`);
+      const img = req.files.img;
+      if (img) {
+        img.mv(`./docs/${img.md5}${img.name}`);
         const host = config.get("api_host");
-        const url = `${host}static/${document.md5}${document.name}`;
+        const url = `${host}static/${img.md5}${img.name}`;
         const user = await adapterDatabase.findOne(collection, id);
-        user.document_profile = url;
+        user.img = url;
+        // 
         await adapterDatabase.update(collection, user, id);
 
         res.status(200).json({
           ok: true,
-          message: "documentn del usuario guardado",
+          message: "Imagen del usuario guardada",
           info: user,
         });
-      }
-      throw { status: 400 }
+      } else {
+      res.status(400).json({
+        ok: false,
+        message: "No se encontro la imagen",
+        info: {},
+      });
+    }
     } catch (error) {
       console.error(error);
       res.status(error?.status || 500).json({
